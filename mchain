@@ -1,0 +1,24 @@
+#!/usr/bin/awk -cf
+BEGIN { key1 = ""; key2 = ""; suffix = "" }
+
+$0 == "" { next }
+
+{
+    for (i = 1; i <= NF; i++) {
+        key1 = key2
+        key2 = suffix
+        suffix = tolower($i)
+
+        if (key1 == "") { continue }
+        
+        chain[key1, key2] = chain[key1, key2] suffix " "
+    }
+}
+
+END {
+    chain[key2, suffix] = chain[key2, suffix] " --END--"
+
+    for (key in chain) {
+        print key "=" chain[key]
+    }
+}

@@ -1,0 +1,42 @@
+#!/usr/bin/awk -cf
+BEGIN { 
+    FS="="
+    "date +%N" | getline seed
+    srand(seed)
+}
+
+{ 
+    chain[$1] = $2
+    init[NR] = $1
+}
+
+END {
+    start = init[int(NR * rand() + 1)]
+    suffix = chain[start]
+    i = 1
+
+    split(start, w, SUBSEP)
+
+    w1 = w[1]
+    w2 = w[2]
+
+    printf("%s %s ", w1, w2)
+
+    for (;;) {
+        n = split(suffix, opt, " ")
+        w3 = opt[int(n * rand() + 1)]
+
+        if (w3 == "--END--" || w3 == "") { break }
+        if (limit != "" && i > limit) { break }
+
+        printf("%s ", w3)
+
+        i++
+
+        w1 = w2
+        w2 = w3
+
+        suffix = chain[w1, w2] 
+    }
+    printf("\n")
+}
